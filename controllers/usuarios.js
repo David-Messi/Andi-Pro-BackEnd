@@ -5,9 +5,13 @@ const Usuario = require('../models/Usuarios');
 
 const getUsuarios = async ( req, res = response ) => {
 
+    const desde = Number(req.query.desde) || 0;
+
     const [ usuarios, total ] = await Promise.all([
         Usuario.find()
-                .populate('conjunto', 'nombre'),
+            .skip( desde )
+            .limit( 20 )
+            .populate('conjunto', 'nombre'),
         Usuario.countDocuments()
     ]);
 

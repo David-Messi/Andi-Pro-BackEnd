@@ -26,18 +26,22 @@ const getCobranza = async ( req, res = response ) => {
 const getCobranzaPorUsuario = async (req, res = response ) => {
 
     const uid = req.params.id;
+    const desde = Number(req.query.desde) || 0;
 
     try {
 
-        let cobranza = await Cobranza.find({ usuario: uid });
+        let cobranza = await Cobranza.find({ usuario: uid })
+                            .skip( desde )
+                            .limit( 20 );
 
+        const total = await Cobranza.find({ usuario: uid }).countDocuments();
         cobranza.reverse();
                                         
 
         res.json({
             ok: true,
-            msg: 'Busqueda Cobranza Por Usuario',
-            cobranza
+            cobranza,
+            total
         });
 
         

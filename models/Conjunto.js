@@ -32,6 +32,14 @@ const ConjuntoSchema = Schema({
 
     factura: {
         type: String
+    },
+
+    notaInformeMes: {
+        type: String
+    },
+
+    notaFactura: {
+        type: String
     }
 
 });

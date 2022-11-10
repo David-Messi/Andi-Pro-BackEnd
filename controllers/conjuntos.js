@@ -2,25 +2,29 @@
 const response = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Conjunto = require('../models/Conjunto');
+const Usuarios = require('../models/Usuarios');
 const Usuario = require('../models/Usuarios');
-
-
 
 
 
 
 const getConjuntos = async ( req, res = response ) => {
 
-
     const [ conjuntos, total ] = await Promise.all([
         Conjunto.find(),
         Conjunto.countDocuments()
     ]);
 
+    const respuesta = conjuntos.sort( (a, b) => {
+        const nombreA = a.nombre.toLowerCase(); 
+        const nombreB = b.nombre.toLowerCase(); 
+        return nombreA < nombreB ? -1 : 1
+    });
+
 
     res.json({
         ok: true,
-        conjuntos,
+        conjuntos: respuesta,
         total
     });
 }
@@ -62,7 +66,6 @@ const getConjuntoPorId = async ( req, res = response ) => {
 
 const crearConjunto = async ( req, res = response ) => {
 
-
     try {
 
         const conjunto = new Conjunto( req.body );
@@ -89,9 +92,7 @@ const crearConjunto = async ( req, res = response ) => {
 
 const actualizarConjunto = async ( req, res = response ) => {
 
-
     const id = req.params.id;
-
 
     try {
 
@@ -114,6 +115,44 @@ const actualizarConjunto = async ( req, res = response ) => {
             conjunto: conjuntoDB
         });
 
+        
+    } catch (error) {
+        console.log( error );
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el Administrador'
+        });
+    }
+}
+
+
+
+const actualizarConjuntoNotas = async ( req, res = response ) => {
+
+    const id = req.params.id;
+
+    try {
+
+        const conjunto = await Conjunto.findById( id );
+        if( !conjunto ) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No Existe Un Conjunto Por Ese Id'
+            });
+        }
+
+        const conjuntoBody = {
+            notaInformeMes: req.body.notaInformeMes,
+            notaFactura: req.body.notaFactura,
+        }
+
+        const conjuntoDB = await Conjunto.findByIdAndUpdate( id, conjuntoBody, { new: true } ); 
+
+        res.json({
+            ok: true,
+            conjunto: conjuntoDB
+        });
+
 
         
     } catch (error) {
@@ -125,6 +164,7 @@ const actualizarConjunto = async ( req, res = response ) => {
     }
 
 }
+
 
 
 const eliminarConjunto = async ( req, res = response ) => {
@@ -142,10 +182,11 @@ const eliminarConjunto = async ( req, res = response ) => {
         }
 
         const conjuntoDelete = await Conjunto.findByIdAndDelete( id );
+        const usuariosDelete = await Usuarios.deleteMany({ conjunto: id });
 
         res.json({
             ok: true,
-            conjunto: conjuntoDelete
+            conjunto: conjuntoDelete,
         });
 
 
@@ -255,5 +296,6 @@ module.exports = {
     getConjuntoPorId,
     loginConjunto,
     revalidarToken,
+    actualizarConjuntoNotas,
 }
 
