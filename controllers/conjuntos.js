@@ -271,7 +271,7 @@ const revalidarToken = async( req, res = response ) => {
     const admin = await Conjunto.findById( uid );
 
     // Informacion de Usuarios
-    const usuarios = await Usuario.find({ conjunto: uid });
+    const usuarios = await Usuario.find({ conjunto: uid }).sort({ gestion: 1 });
 
 
 
