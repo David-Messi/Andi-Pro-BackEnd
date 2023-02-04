@@ -11,6 +11,7 @@ const getUsuarios = async ( req, res = response ) => {
         Usuario.find()
             .skip( desde )
             .limit( 20 )
+            .sort({ gestion: 1 })
             .populate('conjunto', 'nombre'),
         Usuario.countDocuments()
     ]);

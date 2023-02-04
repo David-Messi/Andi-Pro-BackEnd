@@ -58,6 +58,9 @@ router.put('/clave', validarJWT, cambioClave );
 
 router.delete('/:id', eliminarAdmin );
 
+// router.delete('/:id', eliminarAdmin );
+
+
 
 
 
