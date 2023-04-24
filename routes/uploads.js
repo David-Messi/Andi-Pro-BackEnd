@@ -10,7 +10,7 @@ const { fileUploads, mostrarImagen } = require('../controllers/uploads');
 const router = Router();
 
 
-router.use( exfileUpload() );
+router.use(exfileUpload({ createParentPath: true }));
 
 
 
